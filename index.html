@@ -4,10 +4,64 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
 <body>
-    
+    <div class="title-grid-container">
+        <div class="logo"> <img id="logo" src="./images/running.svg" alt="running logo"> </div>
+        <div class="title"> <span id="title">ON TRACK: exercise tracker</span> </div>
+        <div>Future login area</div>
+    </div>
+
+    <div id="spacerBar"><br></div>
+    <br>
+
+    <div class="grid-container">
+        <!-- Column Headers -->
+        <div class="grid-col-1">Date</div>
+        <div class="grid-col-2">Activity</div>
+        <div class="grid-col-3">Length (minutes)</div>
+        <div class="grid-col-4">Effort</div>
+        <div class="grid-col-5">Emotion</div>
+        <div class="grid-col-6">Add / Remove</div>
+        
+        <!-- 1. Date -->
+        <input type="date" id="activity-date">
+        
+        <!-- 2. Activity -->
+        <select name="activity" id="activity-selector">
+            <option value=""> - select - </option>
+            <option value="running">running</option>
+            <option value="walking">walking</option>
+            <option value="gym">gym</option>
+            <option value="biking">biking</option>
+            <option value="swimming">swimming</option>
+        </select>
+
+        <!-- 3. Length (min) -->
+        <input type="number" name="length" id="activity-length">
+        
+        <!-- 4. Effort -->
+        <input type="range" name="effort" id="effort-range" min="1" max="5">
+
+        <!-- 5. Emotion -->
+        <select name="Emotion" id="emotion-dropdown">
+            <option value="1">😀 great</option>
+            <option value="2">🙂 good</option>
+            <option value="3" selected>😐 average</option>
+            <option value="4">🙁 not great</option>
+            <option value="5">😫 bad</option>
+        </select>
+
+        <!-- 6. Add / Remove -->
+        <button id="submit-button">add to log</button>
+
+        <div id="new-activies">next areas</div>
+        
+
+        
+    </div>
 
     <script src="index.js"></script>
 </body>

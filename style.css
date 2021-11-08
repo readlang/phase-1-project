@@ -1,0 +1,36 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.title-grid-container {
+    display: grid;
+    grid-template-columns: 200px 860px 200px;
+    column-gap: 20px;
+    justify-content: center;
+}
+
+#logo {
+    height: 100px;
+}
+
+#title {
+    font-size:50px;
+    font-weight: 800;
+    color: black;
+}
+
+#spacerBar {
+    background-color: black;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 200px 200px 200px 200px 200px 200px;
+    column-gap: 20px;
+    row-gap: 20px;
+    justify-content: center;
+    /*
+    grid-auto-rows: minmax(100px, auto);
+    */
+}
+
