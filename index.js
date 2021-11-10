@@ -24,16 +24,18 @@ function grabInputs() {
 		feeling: feeling
 	}
 	//console.log(activityObj)
+	// I will change this to send to JSON instead of add to DOM
 	addItemToDOM(activityObj)
 }
 
 function sendToJSON(params) {
 	//add this later
+	
 }
 
 function addItemToDOM(activityObj) {
 	const array = ["date", "activity", "length", "effort", "feeling"]
-	const uniqueID = parseInt(Math.random() * 1000)   // <-- this assigns a unique identifier to the activity
+	const uniqueID = parseInt(Math.random() * 1000)   // <-- this assigns a unique identifier to the activity line
 	array.forEach(element => {
 		const targetLocation = document.querySelector(`#column-${element}`)
 		const newElement = document.createElement("div")
@@ -52,25 +54,19 @@ function addItemToDOM(activityObj) {
 }
 
 function createRemoveButtonListener(uniqueID) {
-	const targetButton = document.getElementsByClassName(uniqueID)[5] //this grabs the remove button in the DOM
-	console.log(targetButton)  // <---this logs the correct DOM element to the console
-	targetButton.addEventListener("click", removeItemFromDOM(uniqueID) )  // <--- this line has the bug
-	/* If I comment out the above line, the program will work (except for the remove button eventListener).  I can then invoke the function below manually in the console, and it also works.
-	If I don't comment out the above line, the program runs, but the callback function is invoked immediately, and the "remove" feature deletes the activity line.
-	So my main problem is figuring out why the "click" is registering when I have not clicked the target button.
-	*/
-}
-
-function removeItemFromDOM(uniqueID) {   // <-- this function works correctly
-	console.log(" -- REMOVE BUTTON CLICKED -- ")
-	const collection = document.getElementsByClassName(uniqueID)
-	console.log(collection)
-
-	for (let i = 0; i < 6; i++) {
-		const element = collection[0];
+	const targetButton = document.getElementsByClassName(uniqueID)[5] 
+	console.log(targetButton)
 		
-		console.log(element)
-		element.remove()
-	}
-
+	targetButton.addEventListener("click", function () {
+		console.log(" -- REMOVE BUTTON CLICKED -- ")
+		console.log(uniqueID)
+		const collection = document.getElementsByClassName(uniqueID)
+		console.log(collection)
+	
+		// As elements in the collection are removed, the collection gets shorter, so we end up removing the "first" item 6 times.  All 6 items end up being removed.
+		for (let i = 0; i < 6; i++) {
+			const element = collection[0];
+			element.remove()
+		}
+	})
 }
