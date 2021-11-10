@@ -11,7 +11,16 @@
     <div class="title-grid-container">
         <div class="logo"> <img id="logo" src="./images/running.svg" alt="running logo"> </div>
         <div class="title"> <span id="title">ON TRACK: exercise tracker</span> </div>
-        <div>Future login area</div>
+        <div id="logInArea">
+            <br>
+            <span>Please enter your name:</span> 
+            <form action="">
+                <input type="text" name="" id="nameEntry" style="width: 130px;">
+                <button type="submit" id=nameEntryButton>submit</button>
+            </form>
+            <p id="helloName" style="font-weight: 800;"></p>
+
+        </div>
     </div>
 
     <div id="spacerBar"><br></div>
@@ -49,7 +58,7 @@
         <select name="Feeling" id="feeling-dropdown">
             <option value="😀 great">😀 great</option>
             <option value="🙂 good">🙂 good</option>
-            <option value="😐 average" selected>😐 average</option>
+            <option value="😐 okaaay" selected>😐 okaaay</option>
             <option value="🙁 not great">🙁 not great</option>
             <option value="😫 bad">😫 bad</option>
         </select>

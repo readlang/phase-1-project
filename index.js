@@ -1,3 +1,15 @@
+let username
+
+document.querySelector("#nameEntryButton").addEventListener("click", function(event) {
+	event.preventDefault()
+	
+	username = document.querySelector("#nameEntry").value
+	document.querySelector("#helloName").textContent = `Hello, ${username}`
+	console.log(username)
+})
+
+
+
 createAddButtonListener();
 
 function createAddButtonListener() { 
@@ -17,20 +29,21 @@ function grabInputs() {
 	}
 	console.log(date, activity, length, effort, feeling)
 	const activityObj = {
+		name: username,
 		date: date,
 		activity: activity,
 		length: length,
 		effort: effort,
 		feeling: feeling
 	}
-	//console.log(activityObj)
+	console.log(activityObj)
 	// I will change this to send to JSON instead of add to DOM
 	addItemToDOM(activityObj)
 }
 
 function sendToJSON(params) {
 	//add this later
-	
+
 }
 
 function addItemToDOM(activityObj) {
