@@ -23,7 +23,7 @@
         <div class="grid-col-2">Activity</div>
         <div class="grid-col-3">Length (minutes)</div>
         <div class="grid-col-4">Effort</div>
-        <div class="grid-col-5">Emotion</div>
+        <div class="grid-col-5">Feeling</div>
         <div class="grid-col-6">Add / Remove</div>
         
         <!-- 1. Date -->
@@ -31,7 +31,7 @@
         
         <!-- 2. Activity -->
         <select name="activity" id="activity-selector">
-            <option value=""> - select - </option>
+            <option value="no-activity"> - select - </option>
             <option value="running">running</option>
             <option value="walking">walking</option>
             <option value="gym">gym</option>
@@ -40,28 +40,34 @@
         </select>
 
         <!-- 3. Length (min) -->
-        <input type="number" name="length" id="activity-length">
+        <input type="number" name="length" id="activity-length" value="0">
         
         <!-- 4. Effort -->
         <input type="range" name="effort" id="effort-range" min="1" max="5">
 
-        <!-- 5. Emotion -->
-        <select name="Emotion" id="emotion-dropdown">
-            <option value="1">😀 great</option>
-            <option value="2">🙂 good</option>
-            <option value="3" selected>😐 average</option>
-            <option value="4">🙁 not great</option>
-            <option value="5">😫 bad</option>
+        <!-- 5. Feeling -->
+        <select name="Feeling" id="feeling-dropdown">
+            <option value="😀 great">😀 great</option>
+            <option value="🙂 good">🙂 good</option>
+            <option value="😐 average" selected>😐 average</option>
+            <option value="🙁 not great">🙁 not great</option>
+            <option value="😫 bad">😫 bad</option>
         </select>
 
         <!-- 6. Add / Remove -->
         <button id="submit-button">add to log</button>
 
-        <div id="new-activies">next areas</div>
-        
+        <div id="column-date"></div>
+        <div id="column-activity"></div>
+        <div id="column-length"></div>
+        <div id="column-effort"></div>
+        <div id="column-feeling"></div>
+        <div id="column-button"></div>
 
         
     </div>
+
+
 
     <script src="index.js"></script>
 </body>
