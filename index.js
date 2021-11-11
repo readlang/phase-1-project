@@ -1,11 +1,10 @@
 let username = "anonymous-user"
 
-//listens to the name entry button, assigns to "username" variable, displays on page, call funct to grab JSON data
+//username button listener, assigns to "username" variable, displays on page, call funct to grab JSON data
 document.querySelector("#nameEntryButton").addEventListener("click", function(event) {
 	event.preventDefault()
 	username = document.querySelector("#nameEntry").value
 	document.querySelector("#helloName").textContent = `Hello, ${username}`
-	//console.log(username)
 	getFromServer(username)  // loads pre-existing server data matching user name
 })
 
@@ -26,7 +25,6 @@ function grabInputs() {
 	if (date === "") {
 		date = new Date().toISOString().substring(0, 10);
 	}
-	console.log(date, activity, length, effort, feeling)
 	const activityObj = {
 		name: username,
 		date: date,
@@ -35,7 +33,6 @@ function grabInputs() {
 		effort: effort,
 		feeling: feeling
 	}
-	console.log(activityObj)
 	postToServer(activityObj)
 }
 
@@ -56,9 +53,6 @@ function getFromServer(user) {
 	fetch("http://localhost:3000/activitylog")
 	.then(response => response.json())
 	.then(data => {
-		console.log(data)
-		console.log(data.filter( element => element.name === user ))
-		//console.log( data.filter( element => element.name === user ) )
 		returnArrayParser( data.filter( element => element.name === user ) )  // this filters the array elements by the username
 	})
 }
@@ -71,9 +65,6 @@ function clearAllActiviesFromDom() {
 	})
 }
 
-
-
-
 function returnArrayParser(array) {
 	for (const iterator of array) {
 		addItemToDOM(iterator)
@@ -81,13 +72,8 @@ function returnArrayParser(array) {
 }
 
 function addItemToDOM(activityObj) {
-	
 	const array = ["date", "activity", "length", "effort", "feeling"]
-	//const uniqueID = parseInt(Math.random() * 1000)   // <-- this assigns a unique identifier to the activity line
-	console.log(activityObj)
-	console.log(activityObj.id)
 	const uniqueID = activityObj.id
-	console.log(`The uniqueID is: ${uniqueID}`)
 	array.forEach(element => {
 		const targetLocation = document.querySelector(`#column-${element}`)
 		const newElement = document.createElement("div")
@@ -101,19 +87,14 @@ function addItemToDOM(activityObj) {
 	newElement.className = uniqueID
 	newElement.style = "width: 200px"
 	targetLocation.append(newElement)
-	console.log(uniqueID)
 	createRemoveButtonListener(uniqueID)
 }
 
 function createRemoveButtonListener(uniqueID) {
 	const targetButton = document.getElementsByClassName(uniqueID)[5] 
-	console.log(targetButton)
 	targetButton.addEventListener("click", function () {
-		console.log(uniqueID)
+		console.log(`Remove uniqueID: ${uniqueID}`)
 		deleteOneActivityFromServer(uniqueID)
-		setTimeout( () => getFromServer(username), 50)  ////////////////////// this is kinda cheater.  There should be something that waits
-		//waits for the last function to complete before executing
-		
 	})
 }
 
@@ -125,18 +106,5 @@ function deleteOneActivityFromServer(uniqueID) {
 		}
 	} )
 	.then(response => response.json())
-	.then((x) => console.log(x))
-}
-
-//I think this is obsolete and can be deleted...
-function clearOneActivityLineFromDOM(uniqueID) {
-	const collection = document.getElementsByClassName(uniqueID)
-	//console.log(collection)
-
-	/* As elements in the collection are removed, the collection gets shorter, 
-	so we end up removing the "first" item 6 times.  All 6 items end up being removed. */
-	for (let i = 0; i < 6; i++) {
-		const element = collection[0];
-		element.remove()
-	}
+	.then( () => getFromServer(username) )
 }
