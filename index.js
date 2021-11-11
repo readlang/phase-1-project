@@ -1,14 +1,13 @@
-let username
+let username = "anonymous-user"
 
+//listens to the name entry button, assigns to "username" variable, displays on page, call funct to grab JSON data
 document.querySelector("#nameEntryButton").addEventListener("click", function(event) {
 	event.preventDefault()
-	
 	username = document.querySelector("#nameEntry").value
 	document.querySelector("#helloName").textContent = `Hello, ${username}`
-	console.log(username)
+	//console.log(username)
+	getFromServer(username)  // loads pre-existing server data matching user name
 })
-
-
 
 createAddButtonListener();
 
@@ -37,18 +36,58 @@ function grabInputs() {
 		feeling: feeling
 	}
 	console.log(activityObj)
-	// I will change this to send to JSON instead of add to DOM
-	addItemToDOM(activityObj)
+	postToServer(activityObj)
 }
 
-function sendToJSON(params) {
-	//add this later
+function postToServer(activityObj) {
+	fetch("http://localhost:3000/activitylog", {
+		method: "POST",
+		headers: {
+			"content-type": "application/json"
+		},
+		body: JSON.stringify(activityObj)
+	})
+	.then (response => response.json())
+	.then (data => getFromServer(username))
+}
 
+function getFromServer(user) {
+	clearAllActiviesFromDom()
+	fetch("http://localhost:3000/activitylog")
+	.then(response => response.json())
+	.then(data => {
+		console.log(data)
+		console.log(data.filter( element => element.name === user ))
+		//console.log( data.filter( element => element.name === user ) )
+		returnArrayParser( data.filter( element => element.name === user ) )  // this filters the array elements by the username
+	})
+}
+
+function clearAllActiviesFromDom() {
+	const array = ["date", "activity", "length", "effort", "feeling", "button"]
+	array.forEach(element => {
+		const targetLocation = document.querySelector(`#column-${element}`)
+		targetLocation.textContent = ""
+	})
+}
+
+
+
+
+function returnArrayParser(array) {
+	for (const iterator of array) {
+		addItemToDOM(iterator)
+	}
 }
 
 function addItemToDOM(activityObj) {
+	
 	const array = ["date", "activity", "length", "effort", "feeling"]
-	const uniqueID = parseInt(Math.random() * 1000)   // <-- this assigns a unique identifier to the activity line
+	//const uniqueID = parseInt(Math.random() * 1000)   // <-- this assigns a unique identifier to the activity line
+	console.log(activityObj)
+	console.log(activityObj.id)
+	const uniqueID = activityObj.id
+	console.log(`The uniqueID is: ${uniqueID}`)
 	array.forEach(element => {
 		const targetLocation = document.querySelector(`#column-${element}`)
 		const newElement = document.createElement("div")
@@ -69,17 +108,35 @@ function addItemToDOM(activityObj) {
 function createRemoveButtonListener(uniqueID) {
 	const targetButton = document.getElementsByClassName(uniqueID)[5] 
 	console.log(targetButton)
-		
 	targetButton.addEventListener("click", function () {
-		console.log(" -- REMOVE BUTTON CLICKED -- ")
 		console.log(uniqueID)
-		const collection = document.getElementsByClassName(uniqueID)
-		console.log(collection)
-	
-		// As elements in the collection are removed, the collection gets shorter, so we end up removing the "first" item 6 times.  All 6 items end up being removed.
-		for (let i = 0; i < 6; i++) {
-			const element = collection[0];
-			element.remove()
-		}
+		deleteOneActivityFromServer(uniqueID)
+		setTimeout( () => getFromServer(username), 50)  ////////////////////// this is kinda cheater.  There should be something that waits
+		//waits for the last function to complete before executing
+		
 	})
+}
+
+function deleteOneActivityFromServer(uniqueID) {
+	fetch(`http://localhost:3000/activitylog/${uniqueID}`, {
+		method: "DELETE",
+		headers: {
+			"content-type": "application/json"
+		}
+	} )
+	.then(response => response.json())
+	.then((x) => console.log(x))
+}
+
+//I think this is obsolete and can be deleted...
+function clearOneActivityLineFromDOM(uniqueID) {
+	const collection = document.getElementsByClassName(uniqueID)
+	//console.log(collection)
+
+	/* As elements in the collection are removed, the collection gets shorter, 
+	so we end up removing the "first" item 6 times.  All 6 items end up being removed. */
+	for (let i = 0; i < 6; i++) {
+		const element = collection[0];
+		element.remove()
+	}
 }
