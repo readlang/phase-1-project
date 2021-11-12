@@ -1,4 +1,4 @@
-let username = "anonymous-user"
+let username = ""
 
 //username button listener, assigns to "username" variable, displays on page, call funct to grab JSON data
 document.querySelector("#nameEntryButton").addEventListener("click", function(event) {
@@ -36,6 +36,27 @@ function grabInputs() {
 	postToServer(activityObj)
 }
 
+// -- new external database API function --
+function postToServer(activityObj) {
+	const createObj = { record: activityObj, table: "activityTable", }
+
+    fetch("https://api.m3o.com/v1/db/Create", { 
+        method: 'post', 
+        headers: {
+            'Authorization': 'Bearer ZjVhOWQ2ODctMDE1Mi00MzVjLWFlYmQtOWU5N2Q5ODE4MzEy', 
+            'Content-Type': 'application/json' 
+        }, 
+        body: JSON.stringify(createObj)
+    })
+    .then (response => response.json() )
+    .then (data => {
+        console.log("data.id", data.id)
+		getFromServer(username)
+    })
+}
+
+// -- old JSON server function --
+/*
 function postToServer(activityObj) {
 	fetch("http://localhost:3000/activitylog", {
 		method: "POST",
@@ -46,16 +67,41 @@ function postToServer(activityObj) {
 	})
 	.then (response => response.json())
 	.then (data => getFromServer(username))
+}   */
+
+// -- new external database API function --
+function getFromServer(user) {
+	clearAllActiviesFromDom()
+	const queryObj = { table: "activityTable" }
+
+	fetch("https://api.m3o.com/v1/db/Read", {
+        method: "post",
+        headers: {
+            'Authorization': 'Bearer ZjVhOWQ2ODctMDE1Mi00MzVjLWFlYmQtOWU5N2Q5ODE4MzEy', 
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(queryObj)
+    })
+    
+    .then (response => response.json() )
+    .then (json => {
+		console.log("json:", json)
+		console.log("json.records:", json.records)
+		console.log("json.records[0]", json.records[0])
+		console.log("json.records[0]['name']", json["records"][0]["name"] )
+		returnArrayParser( json["records"].filter( element => element.name === user ) )  // this filters the array elements by the username
+	} )
 }
 
-function getFromServer(user) {
+// -- old JSON server function --
+/*  function getFromServer(user) {
 	clearAllActiviesFromDom()
 	fetch("http://localhost:3000/activitylog")
 	.then(response => response.json())
 	.then(data => {
 		returnArrayParser( data.filter( element => element.name === user ) )  // this filters the array elements by the username
 	})
-}
+} */
 
 function clearAllActiviesFromDom() {
 	const array = ["date", "activity", "length", "effort", "feeling", "button"]
@@ -98,6 +144,7 @@ function createRemoveButtonListener(uniqueID) {
 	})
 }
 
+/*  // -- old JSON server function --
 function deleteOneActivityFromServer(uniqueID) {
 	fetch(`http://localhost:3000/activitylog/${uniqueID}`, {
 		method: "DELETE",
@@ -107,4 +154,19 @@ function deleteOneActivityFromServer(uniqueID) {
 	} )
 	.then(response => response.json())
 	.then( () => getFromServer(username) )
+}  */
+
+// -- new external database API function --
+function deleteOneActivityFromServer(uniqueID) {
+	const deleteObj = { table: "activityTable", id: uniqueID }
+	fetch("https://api.m3o.com/v1/db/Delete", {
+        method: "post",
+        headers: {
+            'Authorization': 'Bearer ZjVhOWQ2ODctMDE1Mi00MzVjLWFlYmQtOWU5N2Q5ODE4MzEy', 
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(deleteObj)
+    })
+	.then (response => response.json() )
+    .then ( () => getFromServer(username) )
 }
