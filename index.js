@@ -1,107 +1,14 @@
 let username = ""
+document.querySelector("#nameForm").addEventListener("submit", nameSubmitButton )
 
-//username button listener, assigns to "username" variable, displays on page, call funct to grab JSON data
-document.querySelector("#nameEntryButton").addEventListener("click", function(event) {
+function nameSubmitButton(event) {
 	event.preventDefault()
 	username = document.querySelector("#nameEntry").value
+	document.getElementById("nameForm").reset()
 	document.querySelector("#helloName").textContent = `Hello, ${username}`
-	getFromServer(username)  // loads pre-existing server data matching user name
-})
-
-createAddButtonListener();
-
-function createAddButtonListener() { 
-    const target = document.querySelector("#submit-button");
-	target.addEventListener("click", grabInputs);
-}
-
-function grabInputs() {
-	let date = document.querySelector("#activity-date").value;
-	const activity = document.querySelector("#activity-selector").value;
-	const length = document.querySelector("#activity-length").value;
-	const effort = document.querySelector("#effort-range").value;
-	const feeling = document.querySelector("#feeling-dropdown").value;
-	//this enters today's date if user leaves date field blank
-	if (date === "") {
-		date = new Date().toISOString().substring(0, 10);
-	}
-	const activityObj = {
-		name: username,
-		date: date,
-		activity: activity,
-		length: length,
-		effort: effort,
-		feeling: feeling
-	}
-	postToServer(activityObj)
-}
-
-// -- new external database API function --
-function postToServer(activityObj) {
-	const createObj = { record: activityObj, table: "activityTable", }
-
-    fetch("https://api.m3o.com/v1/db/Create", { 
-        method: 'post', 
-        headers: {
-            'Authorization': 'Bearer ZjVhOWQ2ODctMDE1Mi00MzVjLWFlYmQtOWU5N2Q5ODE4MzEy', 
-            'Content-Type': 'application/json' 
-        }, 
-        body: JSON.stringify(createObj)
-    })
-    .then (response => response.json() )
-    .then (data => {
-        console.log("data.id", data.id)
-		getFromServer(username)
-    })
-}
-
-// -- old JSON server function --
-/*
-function postToServer(activityObj) {
-	fetch("http://localhost:3000/activitylog", {
-		method: "POST",
-		headers: {
-			"content-type": "application/json"
-		},
-		body: JSON.stringify(activityObj)
-	})
-	.then (response => response.json())
-	.then (data => getFromServer(username))
-}   */
-
-// -- new external database API function --
-function getFromServer(user) {
 	clearAllActiviesFromDom()
-	const queryObj = { table: "activityTable" }
-
-	fetch("https://api.m3o.com/v1/db/Read", {
-        method: "post",
-        headers: {
-            'Authorization': 'Bearer ZjVhOWQ2ODctMDE1Mi00MzVjLWFlYmQtOWU5N2Q5ODE4MzEy', 
-            'Content-Type': 'application/json' 
-        },
-        body: JSON.stringify(queryObj)
-    })
-    
-    .then (response => response.json() )
-    .then (json => {
-		console.log("json:", json)
-		console.log("json.records:", json.records)
-		console.log("json.records[0]", json.records[0])
-		console.log("json.records[0]['name']", json["records"][0]["name"] )
-		returnArrayParser( json["records"].filter( element => element.name === user ) )  // this filters the array elements by the username
-	} )
+	getAllFromServer(username)  
 }
-
-// -- old JSON server function --
-/*  function getFromServer(user) {
-	clearAllActiviesFromDom()
-	fetch("http://localhost:3000/activitylog")
-	.then(response => response.json())
-	.then(data => {
-		returnArrayParser( data.filter( element => element.name === user ) )  // this filters the array elements by the username
-	})
-} */
 
 function clearAllActiviesFromDom() {
 	const array = ["date", "activity", "length", "effort", "feeling", "button"]
@@ -111,11 +18,72 @@ function clearAllActiviesFromDom() {
 	})
 }
 
-function returnArrayParser(array) {
-	for (const iterator of array) {
-		addItemToDOM(iterator)
+function getAllFromServer(user) {
+	const queryObj = { table: "activityTable" }
+	fetch("https://api.m3o.com/v1/db/Read", {
+        method: "post",
+        headers: {
+            'Authorization': 'Bearer ZjVhOWQ2ODctMDE1Mi00MzVjLWFlYmQtOWU5N2Q5ODE4MzEy', 
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(queryObj)
+    })
+    .then (response => response.json() )
+    .then (json => {
+		returnArrayLooper( json["records"].filter( element => element.name === user ) ) 
+	} )
+}
+
+function returnArrayLooper(array) {
+	for (const element of array) {
+		addItemToDOM(element)
 	}
 }
+
+
+document.querySelector("#add-activity").addEventListener("click", collectInputsIntoObject);
+
+function collectInputsIntoObject() {
+	let date = document.querySelector("#activity-date").value;
+	if (date === "") {
+		date = new Date().toISOString().substring(0, 10);
+	}
+	const activityObj = {
+		activity: document.querySelector("#activity-selector").value,
+		date: date,
+		effort: document.querySelector("#effort-range").value,
+		feeling: document.querySelector("#feeling-dropdown").value,
+		length: document.querySelector("#activity-length").value,
+		name: username,
+	}
+	// this resets values after click
+	document.getElementById("activity-date").value = "";
+	document.getElementById("activity-selector").value = "no-activity";
+	document.getElementById("activity-length").value = 0;
+	document.getElementById("effort-range").value = 3;
+	document.getElementById("feeling-dropdown").value = "😐 okaaay";
+	postToServer(activityObj)
+}
+
+function postToServer(activityObj) {
+	const createServerObj = { record: activityObj, table: "activityTable", }
+    fetch("https://api.m3o.com/v1/db/Create", { 
+        method: 'post', 
+        headers: {
+            'Authorization': 'Bearer ZjVhOWQ2ODctMDE1Mi00MzVjLWFlYmQtOWU5N2Q5ODE4MzEy', 
+            'Content-Type': 'application/json' 
+        }, 
+        body: JSON.stringify(createServerObj)
+    })
+    .then (response => response.json() )
+    .then (data => {
+        activityObj.id = data.id
+		console.log("Post to Server:", activityObj)
+		addItemToDOM(activityObj)
+    })
+}
+
+
 
 function addItemToDOM(activityObj) {
 	const array = ["date", "activity", "length", "effort", "feeling"]
@@ -141,22 +109,10 @@ function createRemoveButtonListener(uniqueID) {
 	targetButton.addEventListener("click", function () {
 		console.log(`Remove uniqueID: ${uniqueID}`)
 		deleteOneActivityFromServer(uniqueID)
+		deleteOneActivityFromDOM(uniqueID)
 	})
 }
 
-/*  // -- old JSON server function --
-function deleteOneActivityFromServer(uniqueID) {
-	fetch(`http://localhost:3000/activitylog/${uniqueID}`, {
-		method: "DELETE",
-		headers: {
-			"content-type": "application/json"
-		}
-	} )
-	.then(response => response.json())
-	.then( () => getFromServer(username) )
-}  */
-
-// -- new external database API function --
 function deleteOneActivityFromServer(uniqueID) {
 	const deleteObj = { table: "activityTable", id: uniqueID }
 	fetch("https://api.m3o.com/v1/db/Delete", {
@@ -167,6 +123,11 @@ function deleteOneActivityFromServer(uniqueID) {
         },
         body: JSON.stringify(deleteObj)
     })
-	.then (response => response.json() )
-    .then ( () => getFromServer(username) )
+}
+
+function deleteOneActivityFromDOM(uniqueID) {
+	const collection = document.getElementsByClassName(uniqueID)
+	while (collection.length != 0) {
+		collection[0].remove()
+	}
 }

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Document</title>
+    <title>On Track exercise tracker</title>
 </head>
 <body>
     <div class="title-grid-container">
@@ -14,10 +14,14 @@
         <div id="logInArea">
             <br>
             <span>Please enter your name:</span> 
-            <form action="">
-                <input type="text" name="" id="nameEntry" style="width: 130px;">
-                <button type="submit" id=nameEntryButton>submit</button>
+
+
+            <form id = "nameForm">
+                <input type="text" placeholder="Name here..." name="" id="nameEntry" style="width: 130px;">
+                <button type="submit" id="nameEntryButton">submit</button>
             </form>
+
+
             <p id="helloName" style="font-weight: 800;"></p>
 
         </div>
@@ -64,7 +68,7 @@
         </select>
 
         <!-- 6. Add / Remove -->
-        <button id="submit-button">add to log</button>
+        <button id="add-activity">add activity</button>
 
         <div id="column-date"></div>
         <div id="column-activity"></div>
@@ -73,10 +77,7 @@
         <div id="column-feeling"></div>
         <div id="column-button"></div>
 
-        
     </div>
-
-
 
     <script src="index.js"></script>
 </body>
