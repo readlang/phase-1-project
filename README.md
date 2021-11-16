@@ -9,9 +9,9 @@ This is a exercise tracking app called On Track.  On Track allows users to manag
 On Track has the following features:
 
     * "Log in" to the website by entering one's name or username.
-    * Add workouts associated with a username with the following data: Date, Activity, Length, Effort, and Feeling.  
+    * Add workouts with the following data: Date, Activity, Length, Effort, and Feeling.  
     * Remove workouts with one click.
-    * Workouts are saved persistently to a database and can be viewed at a later time by logging in with the same name.
+    * Workouts are saved to a database and can be viewed at a later time by logging in with the same name.
     * Multiple uses are supported saving to the database from different clients
 
 
